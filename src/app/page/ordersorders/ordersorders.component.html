@@ -1,0 +1,56 @@
+<h1 *ngIf="!showMenu">
+  Orders {{ showAll ? "All" : "Incomplete"
+  }}<label class="switch">
+    <input type="checkbox" [(ngModel)]="showAll" />
+    <span class="slider"></span>
+  </label>
+</h1>
+<div *ngIf="!showMenu">
+  <table *ngIf="showAll">
+    <tr *ngFor="let order of orderList">
+      <td *ngFor="let item of order">{{ item }}</td>
+      <td *ngIf="order[2] == 'Pending'">
+        <button (click)="completed(order)">Compete now</button>
+      </td>
+      <td *ngIf="order[2] !== 'Pending'">Completed</td>
+    </tr>
+    <tr>
+      <td colspan="4">Total</td>
+      <td colspan="2">{{ Total }}</td>
+    </tr>
+  </table>
+
+  <table *ngIf="!showAll">
+    <tr *ngFor="let order of orderIncompleteList">
+      <td *ngFor="let item of order">{{ item }}</td>
+      <td *ngIf="order[2] == 'Pending'">
+        <button (click)="completed(order)">Compete now</button>
+      </td>
+      <td *ngIf="order[2] !== 'Pending'">Completed</td>
+    </tr>
+    <tr>
+      <td colspan="4">Total</td>
+      <td colspan="2">{{ Total }}</td>
+    </tr>
+  </table>
+</div>
+
+<div *ngIf="showMenu">
+  <table *ngIf="showAll">
+    <tr *ngFor="let menuItem of menu; let i = index">
+      <td *ngFor="let item of menuItem">{{ item }}</td>
+      <td>
+        <div class="counter">
+          <span class="down" (click)="decreaseCount(i)">-</span>
+          <input type="number" [(ngModel)]="menuItem[2]" />
+          <span class="up" (click)="increaseCount(i)">+</span>
+        </div>
+      </td>
+    </tr>
+  </table>
+  <button (click)="placeOrder()">Done</button>
+</div>
+
+<button class="NewOrder" (click)="toggle()">
+  {{ !showMenu ? "Place Order" : "Cancel" }}
+</button>
