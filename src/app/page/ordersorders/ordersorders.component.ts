@@ -28,29 +28,33 @@ export class OrdersordersComponent implements OnInit {
     }, 30000);
   }
   getOrders() {
-    this.http.get<any[]>('http://localhost:3000/order/today').subscribe({
-      next: (value: any) => {
-        this.orderList = value;
-        this.Total = 0;
-        this.orderList.map((m: any) => {
-          this.Total = this.Total + parseInt(m.total);
-        });
-      },
-      error: (err: any) => {
-        this.toastr.error(err);
-      },
-    });
-    this.http.get<any[]>('http://localhost:3000/order/incomplete').subscribe({
-      next: (value: any) => {
-        this.orderIncompleteList = value;
-      },
-      error: (err: any) => {
-        this.toastr.error(err);
-      },
-    });
+    this.http
+      .get<any[]>('https://burderdaddy.onrender.com//order/today')
+      .subscribe({
+        next: (value: any) => {
+          this.orderList = value;
+          this.Total = 0;
+          this.orderList.map((m: any) => {
+            this.Total = this.Total + parseInt(m.total);
+          });
+        },
+        error: (err: any) => {
+          this.toastr.error(err);
+        },
+      });
+    this.http
+      .get<any[]>('https://burderdaddy.onrender.com//order/incomplete')
+      .subscribe({
+        next: (value: any) => {
+          this.orderIncompleteList = value;
+        },
+        error: (err: any) => {
+          this.toastr.error(err);
+        },
+      });
   }
   getMenu() {
-    this.http.get<any[]>('http://localhost:3000/menu').subscribe({
+    this.http.get<any[]>('https://burderdaddy.onrender.com//menu').subscribe({
       next: (value: any) => {
         value.map((m: any) => {
           m.qty = 0;
@@ -64,7 +68,10 @@ export class OrdersordersComponent implements OnInit {
   }
   completed(item: any) {
     this.http
-      .post<any[]>('http://localhost:3000/order-completed/' + item._id, {})
+      .post<any[]>(
+        'https://burderdaddy.onrender.com//order-completed/' + item._id,
+        {}
+      )
       .subscribe({
         next: (value: any) => {
           this.toastr.success(value);
@@ -111,18 +118,20 @@ export class OrdersordersComponent implements OnInit {
     });
     order.total = this.OrderTotal;
     order.status = 'Pending';
-    this.http.post<any[]>('http://localhost:3000/order', order).subscribe({
-      next: (value: any) => {
-        console.log(value);
-        this.toastr.success(value);
-        this.showMenu = false;
-        this.getOrders();
-      },
-      error: (err: any) => {
-        this.toastr.error(err);
-        console.log(err);
-        this.showMenu = false;
-      },
-    });
+    this.http
+      .post<any[]>('https://burderdaddy.onrender.com//order', order)
+      .subscribe({
+        next: (value: any) => {
+          console.log(value);
+          this.toastr.success(value);
+          this.showMenu = false;
+          this.getOrders();
+        },
+        error: (err: any) => {
+          this.toastr.error(err);
+          console.log(err);
+          this.showMenu = false;
+        },
+      });
   }
 }
