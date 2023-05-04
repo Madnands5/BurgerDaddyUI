@@ -29,7 +29,7 @@ export class OrdersordersComponent implements OnInit {
   }
   getOrders() {
     this.http
-      .get<any[]>('https://burderdaddy.onrender.com//order/today')
+      .get<any[]>('https://burderdaddy.onrender.com/order/today')
       .subscribe({
         next: (value: any) => {
           this.orderList = value;
@@ -43,7 +43,7 @@ export class OrdersordersComponent implements OnInit {
         },
       });
     this.http
-      .get<any[]>('https://burderdaddy.onrender.com//order/incomplete')
+      .get<any[]>('https://burderdaddy.onrender.com/order/incomplete')
       .subscribe({
         next: (value: any) => {
           this.orderIncompleteList = value;
@@ -54,7 +54,7 @@ export class OrdersordersComponent implements OnInit {
       });
   }
   getMenu() {
-    this.http.get<any[]>('https://burderdaddy.onrender.com//menu').subscribe({
+    this.http.get<any[]>('https://burderdaddy.onrender.com/menu').subscribe({
       next: (value: any) => {
         value.map((m: any) => {
           m.qty = 0;
@@ -69,7 +69,7 @@ export class OrdersordersComponent implements OnInit {
   completed(item: any) {
     this.http
       .post<any[]>(
-        'https://burderdaddy.onrender.com//order-completed/' + item._id,
+        'https://burderdaddy.onrender.com/order-completed/' + item._id,
         {}
       )
       .subscribe({
@@ -119,7 +119,7 @@ export class OrdersordersComponent implements OnInit {
     order.total = this.OrderTotal;
     order.status = 'Pending';
     this.http
-      .post<any[]>('https://burderdaddy.onrender.com//order', order)
+      .post<any[]>('https://burderdaddy.onrender.com/order', order)
       .subscribe({
         next: (value: any) => {
           console.log(value);
