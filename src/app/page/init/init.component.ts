@@ -13,18 +13,8 @@ export class InitComponent implements OnInit {
     private http: HttpClient,
     private router: Router
   ) {}
-  enableButtons: Boolean = false;
-  ngOnInit(): void {
-    this.http.get<any[]>('https://burderdaddy.onrender.com/init').subscribe({
-      next: (value: any) => {
-        this.toastr.success(value);
-        this.enableButtons = true;
-      },
-      error: (err) => {
-        this.toastr.error(err);
-      },
-    });
-  }
+
+  ngOnInit(): void {}
 
   goToOrders() {
     this.router.navigate(['/orders']);

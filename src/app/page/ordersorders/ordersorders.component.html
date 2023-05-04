@@ -8,29 +8,41 @@
 <div *ngIf="!showMenu">
   <table *ngIf="showAll">
     <tr *ngFor="let order of orderList">
-      <td *ngFor="let item of order">{{ item }}</td>
-      <td *ngIf="order[2] == 'Pending'">
+      <td>{{ order.token }}</td>
+      <td>
+        <span *ngFor="let item of order.order_items">
+          {{ item.count + " " + item.item + " :" + item.cost + "/-" }}<br
+        /></span>
+      </td>
+      <td>{{ order.total }} /-</td>
+      <td *ngIf="order.status == 'Pending'">
         <button (click)="completed(order)">Compete now</button>
       </td>
-      <td *ngIf="order[2] !== 'Pending'">Completed</td>
+      <td *ngIf="order.status !== 'Pending'">Completed</td>
     </tr>
     <tr>
-      <td colspan="4">Total</td>
-      <td colspan="2">{{ Total }}</td>
+      <td colspan="3">Total</td>
+      <td colspan="1">{{ Total }} /-</td>
     </tr>
   </table>
 
   <table *ngIf="!showAll">
     <tr *ngFor="let order of orderIncompleteList">
-      <td *ngFor="let item of order">{{ item }}</td>
-      <td *ngIf="order[2] == 'Pending'">
+      <td>{{ order.token }}</td>
+      <td>
+        <span *ngFor="let item of order.order_items">
+          {{ item.count + " " + item.item + " :" + item.cost + "/-" }}<br
+        /></span>
+      </td>
+      <td>{{ order.total }} /-</td>
+      <td *ngIf="order.status == 'Pending'">
         <button (click)="completed(order)">Compete now</button>
       </td>
-      <td *ngIf="order[2] !== 'Pending'">Completed</td>
+      <td *ngIf="order.status !== 'Pending'">Completed</td>
     </tr>
     <tr>
-      <td colspan="4">Total</td>
-      <td colspan="2">{{ Total }}</td>
+      <td colspan="3">Total</td>
+      <td colspan="1">{{ Total }} /-</td>
     </tr>
   </table>
 </div>
@@ -38,17 +50,25 @@
 <div *ngIf="showMenu">
   <table *ngIf="showAll">
     <tr *ngFor="let menuItem of menu; let i = index">
-      <td *ngFor="let item of menuItem">{{ item }}</td>
+      <td>
+        {{ menuItem.name }}
+      </td>
+      <td>
+        {{ menuItem.cost }}
+      </td>
+      <td>
+        {{ menuItem.qty }}
+      </td>
       <td>
         <div class="counter">
           <span class="down" (click)="decreaseCount(i)">-</span>
-          <input type="number" [(ngModel)]="menuItem[2]" />
+          <input type="number" [(ngModel)]="menuItem.qty" />
           <span class="up" (click)="increaseCount(i)">+</span>
         </div>
       </td>
     </tr>
     <tr>
-      <td colspan="1">Total</td>
+      <td colspan="3">Total</td>
       <td colspan="2">{{ OrderTotal }}</td>
     </tr>
   </table>

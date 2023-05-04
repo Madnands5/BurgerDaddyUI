@@ -15,8 +15,8 @@ export class OrdersordersComponent implements OnInit {
   ) {}
   showMenu = false;
   showAll = true;
-  orderList = [];
-  orderIncompleteList = [];
+  orderList: any = [];
+  orderIncompleteList: any = [];
   menu: any | never = [];
   Total: number = 0;
   OrderTotal: number = 0;
@@ -25,114 +25,104 @@ export class OrdersordersComponent implements OnInit {
     this.getOrders();
     setInterval(() => {
       this.getOrders();
-    }, 5000);
+    }, 30000);
   }
   getOrders() {
-    this.http
-      .get<any[]>('https://burderdaddy.onrender.com/view-all-orders')
-      .subscribe({
-        next: (value: any) => {
-          this.orderList = value;
-          this.Total = 0;
-          this.orderList.map((m: any) => {
-            console.log(m);
-            console.log(this.Total);
-            this.Total = this.Total + parseInt(m[4]);
-          });
-        },
-        error: (err: any) => {},
-      });
-    this.http
-      .get<any[]>('https://burderdaddy.onrender.com/view-incomplete-orders')
-      .subscribe({
-        next: (value: any) => {
-          this.orderIncompleteList = value;
-        },
-        error: (err: any) => {},
-      });
+    this.http.get<any[]>('http://localhost:3000/order/today').subscribe({
+      next: (value: any) => {
+        this.orderList = value;
+        this.Total = 0;
+        this.orderList.map((m: any) => {
+          this.Total = this.Total + parseInt(m.total);
+        });
+      },
+      error: (err: any) => {
+        this.toastr.error(err);
+      },
+    });
+    this.http.get<any[]>('http://localhost:3000/order/incomplete').subscribe({
+      next: (value: any) => {
+        this.orderIncompleteList = value;
+      },
+      error: (err: any) => {
+        this.toastr.error(err);
+      },
+    });
   }
   getMenu() {
-    this.http.get<any[]>('https://burderdaddy.onrender.com/getMenu').subscribe({
+    this.http.get<any[]>('http://localhost:3000/menu').subscribe({
       next: (value: any) => {
         value.map((m: any) => {
-          m[2] = 0;
+          m.qty = 0;
         });
         this.menu = value;
       },
-      error: (err: any) => {},
+      error: (err: any) => {
+        this.toastr.error(err);
+      },
     });
   }
   completed(item: any) {
     this.http
-      .post<any[]>(
-        'https://burderdaddy.onrender.com/order-completed/' + item[0],
-        {}
-      )
+      .post<any[]>('http://localhost:3000/order-completed/' + item._id, {})
       .subscribe({
         next: (value: any) => {
           this.toastr.success(value);
+          this.getOrders();
         },
         error: (err: any) => {
-          this.toastr.success(err);
+          this.toastr.error(err);
         },
       });
   }
 
   toggle() {
     this.showMenu = !this.showMenu;
-    if (this.showMenu) {
-      this.getMenu();
-      this.OrderTotal = 0;
+    this.getMenu();
+    this.OrderTotal = 0;
+  }
+  decreaseCount(i: any) {
+    if (this.menu[i].qty >= 1 && typeof this.menu[i].qty == 'number') {
+      this.menu[i].qty--;
+      this.OrderTotal -= this.menu[i].cost;
     }
   }
-  decreaseCount(item: any) {
-    if (this.menu[item][2] >= 1 && typeof this.menu[item][1] == 'number') {
-      this.menu[item][2]--;
-      this.OrderTotal -= this.menu[item][1];
-    }
-  }
-  increaseCount(item: any) {
-    if (this.menu[item][2] < 100 && typeof this.menu[item][1] == 'number') {
-      this.menu[item][2]++;
-
-      this.OrderTotal += this.menu[item][1];
+  increaseCount(i: any) {
+    if (this.menu[i].qty < 100 && typeof this.menu[i].qty == 'number') {
+      this.menu[i].qty++;
+      this.OrderTotal += this.menu[i].cost;
     }
   }
 
   placeOrder() {
-    let order = {
-      order: '',
-      status: 'Pending',
-      payment: 'Yes',
-      total: 0,
+    let order: any = {
+      order_items: [],
+      total: 800,
     };
     this.menu.map((m: any) => {
-      if (m[2] > 0) {
-        order.order += m[2] + ' ' + m[0] + ',';
-        order.total += m[1] * m[2];
+      if (m.qty > 0) {
+        order.order_items.push({
+          item: m.name,
+          variant: '-',
+          cost: m.cost,
+          count: m.qty,
+        });
       }
     });
-    this.http
-      .post<any[]>(
-        'https://burderdaddy.onrender.com/create-order/' +
-          order.order +
-          '/' +
-          order.status +
-          '/' +
-          order.payment +
-          '/' +
-          order.total,
-        {}
-      )
-      .subscribe({
-        next: (value: any) => {
-          this.toastr.success(value);
-          this.showMenu = false;
-        },
-        error: (err: any) => {
-          this.toastr.success(err);
-          this.showMenu = false;
-        },
-      });
+    order.total = this.OrderTotal;
+    order.status = 'Pending';
+    this.http.post<any[]>('http://localhost:3000/order', order).subscribe({
+      next: (value: any) => {
+        console.log(value);
+        this.toastr.success(value);
+        this.showMenu = false;
+        this.getOrders();
+      },
+      error: (err: any) => {
+        this.toastr.error(err);
+        console.log(err);
+        this.showMenu = false;
+      },
+    });
   }
 }
