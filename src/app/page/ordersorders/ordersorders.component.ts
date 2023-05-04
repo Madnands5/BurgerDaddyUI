@@ -19,6 +19,7 @@ export class OrdersordersComponent implements OnInit {
   orderIncompleteList = [];
   menu: any | never = [];
   Total: number = 0;
+  OrderTotal: number = 0;
   ngOnInit(): void {
     this.getMenu();
     this.getOrders();
@@ -81,16 +82,20 @@ export class OrdersordersComponent implements OnInit {
     this.showMenu = !this.showMenu;
     if (this.showMenu) {
       this.getMenu();
+      this.OrderTotal = 0;
     }
   }
   decreaseCount(item: any) {
-    if (this.menu[item][2] >= 1) {
+    if (this.menu[item][2] >= 1 && typeof this.menu[item][1] == 'number') {
       this.menu[item][2]--;
+      this.OrderTotal -= this.menu[item][1];
     }
   }
   increaseCount(item: any) {
-    if (this.menu[item][2] < 100) {
+    if (this.menu[item][2] < 100 && typeof this.menu[item][1] == 'number') {
       this.menu[item][2]++;
+
+      this.OrderTotal += this.menu[item][1];
     }
   }
 
